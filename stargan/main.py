@@ -51,10 +51,14 @@ def main(config):
             solver.train_multi()
     elif config.mode == 'test':
         if config.dataset in ['CelebA', 'RaFD']:
-            # Normal inference
-            # solver.test()
-            # Attack inference
-            solver.test_attack()
+            if config.test_type == 'normal_inference':
+                # Normal inference
+                solver.test()
+            elif config.test_type == 'attack_inference':
+                # Attack inference
+                solver.test_attack()
+            else:
+                raise ValueError('unknown test_type')
             # Feature attack experiment
             # solver.test_attack_feats()
             # Conditional attack experiment
@@ -93,6 +97,7 @@ if __name__ == '__main__':
     parser.add_argument('--resume_iters', type=int, default=None, help='resume training from this step')
     parser.add_argument('--selected_attrs', '--list', nargs='+', help='selected attributes for the CelebA dataset',
                         default=['Black_Hair', 'Blond_Hair', 'Brown_Hair', 'Male', 'Young'])
+    parser.add_argument('--test_type', type=str, default='normal_inference', help='set the test type', choices=['normal_inference', 'attack_inference'])
 
     # Test configuration.
     parser.add_argument('--test_iters', type=int, default=200000, help='test model from this step')
@@ -116,6 +121,7 @@ if __name__ == '__main__':
     parser.add_argument('--sample_step', type=int, default=1000)
     parser.add_argument('--model_save_step', type=int, default=5000)
     parser.add_argument('--lr_update_step', type=int, default=1000)
+
 
     config = parser.parse_args()
     print(config)
