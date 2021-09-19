@@ -931,7 +931,7 @@ class Solver(object):
                 # Translate images.
                 x_fake_list = [x_real]
                 for c_trg in c_trg_list:
-                    x_fake_list.append(self.G(x_real, c_trg))
+                    x_fake_list.append(self.G(x_real, c_trg)[0])
 
                 # Save the translated images.
                 x_concat = torch.cat(x_fake_list, dim=3)
