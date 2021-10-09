@@ -1029,38 +1029,38 @@ class Solver(object):
         elif self.dataset == 'RaFD':
             data_loader = self.rafd_loader
 
-        # Initialize Metrics
-        l1_error, l2_error, min_dist, l0_error = 0.0, 0.0, 0.0, 0.0
-        n_dist, n_samples = 0, 0
-
         for i, (x_real, c_org) in enumerate(data_loader):
             # Prepare input images and target domain labels.
             x_real = x_real.to(self.device)
             c_trg_list = self.create_labels(c_org, self.c_dim, self.dataset, self.selected_attrs)
 
             pgd_attack = attacks.LinfPGDAttack(model=self.G, device=self.device, feat=None)
-
-            with torch.no_grad():
+            
+            for idx, c_trg in enumerate(c_trg_list):
+                print('image', i, 'class', idx)
+                with torch.no_grad():
                     x_real_mod = x_real
                     # x_real_mod = self.blur_tensor(x_real_mod) # use blur
                     gen_noattack, gen_noattack_feats = self.G(x_real_mod, c_trg)
 
-             # Attacks
-            # x_adv, perturb = pgd_attack.perturb(x_real, gen_noattack, c_trg)                          # Vanilla attack
-            # x_adv, perturb, blurred_image = pgd_attack.perturb_blur(x_real, gen_noattack, c_trg)    # White-box attack on blur
-            x_adv, perturb = pgd_attack.perturb_blur_iter_full(x_real, gen_noattack, c_trg)         # Spread-spectrum attack on blur
-            # x_adv, perturb = pgd_attack.perturb_blur_eot(x_real, gen_noattack, c_trg)               # EoT blur adaptation
+                # Attacks
+                # x_adv, perturb = pgd_attack.perturb(x_real, gen_noattack, c_trg)                          # Vanilla attack
+                # x_adv, perturb, blurred_image = pgd_attack.perturb_blur(x_real, gen_noattack, c_trg)    # White-box attack on blur
+                x_adv, perturb = pgd_attack.perturb_blur_iter_full(x_real, gen_noattack, c_trg)         # Spread-spectrum attack on blur
+                # x_adv, perturb = pgd_attack.perturb_blur_eot(x_real, gen_noattack, c_trg)               # EoT blur adaptation
 
-            # Generate adversarial example
-            x_adv = x_real + perturb
+                # Generate adversarial example
+                x_adv = x_real + perturb
 
-            # No attack
-            # x_adv = x_real
+                # No attack
+                # x_adv = x_real
 
-            # x_adv = self.blur_tensor(x_adv)   # use blur  
+                # x_adv = self.blur_tensor(x_adv)   # use blur
 
             result_path = os.path.join(self.result_dir, '{}-images.jpg'.format(i+1))
             save_image(x_adv, result_path)
+            if i == 49:     # stop after this many images
+                break
 
     def test_attack_feats(self):
         """Feature-level attacks"""
