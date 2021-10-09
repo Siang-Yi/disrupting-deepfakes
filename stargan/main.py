@@ -65,6 +65,8 @@ def main(config):
             # solver.test_attack_cond()
         elif config.dataset in ['Both']:
             solver.test_multi()
+    elif config.mode == 'generate':
+        solver.generate_disrupted_image()
 
 
 if __name__ == '__main__':
@@ -104,7 +106,7 @@ if __name__ == '__main__':
 
     # Miscellaneous.
     parser.add_argument('--num_workers', type=int, default=1)
-    parser.add_argument('--mode', type=str, default='train', choices=['train', 'test'])
+    parser.add_argument('--mode', type=str, default='train', choices=['train', 'test', 'generate'])
     parser.add_argument('--use_tensorboard', type=str2bool, default=False)
 
     # Directories.
