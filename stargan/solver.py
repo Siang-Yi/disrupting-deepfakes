@@ -1056,9 +1056,10 @@ class Solver(object):
                 # x_adv = x_real
 
                 # x_adv = self.blur_tensor(x_adv)   # use blur
+                break
 
             result_path = os.path.join(self.result_dir, '{}-images.jpg'.format(i+1))
-            save_image(x_adv, result_path)
+            save_image(self.denorm(x_adv), result_path)
             if i == 49:     # stop after this many images
                 break
 
