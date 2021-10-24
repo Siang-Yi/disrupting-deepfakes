@@ -1060,8 +1060,6 @@ class Solver(object):
 
             result_path = os.path.join(self.result_dir, '{}-images.jpg'.format(i+1))
             save_image(self.denorm(x_adv), result_path)
-            if i == 49:     # stop after this many images
-                break
 
     def test_attack_feats(self):
         """Feature-level attacks"""
